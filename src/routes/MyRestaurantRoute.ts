@@ -14,7 +14,9 @@ const upload = multer({
   },
 });
 
-// /api/my/restaurant
+// endpoint for getting the data of the restaurant managed by the current user
+router.get("/", jwtCheck, jwtParse, MyRestaurantController.getMyRestaurant);
+// endpoint for creating a restaurant
 router.post(
   "/",
   upload.single("imageFile"),
@@ -22,6 +24,15 @@ router.post(
   jwtCheck,
   jwtParse,
   MyRestaurantController.createMyRestaurant
+);
+// endpoint for updating the restaurant
+router.put(
+  "/",
+  upload.single("imageFile"),
+  validateMyRestaurantRequest,
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.updateMyRestaurant
 );
 
 export default router;
