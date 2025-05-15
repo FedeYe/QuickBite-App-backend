@@ -1,6 +1,24 @@
 import { Request, Response } from "express";
 import Restaurant from "../models/restaurant";
 
+const getRestaurant = async (req: Request, res: Response) => {
+  try {
+    const restaurantId = req.params.restaurantId;
+
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      res.status(404).json({ message: "Restaurant not found" });
+      return;
+    }
+
+    res.json(restaurant);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+    return;
+  }
+};
+
 const searchRestaurant = async (req: Request, res: Response) => {
   try {
     const city = req.params.city;
@@ -17,12 +35,12 @@ const searchRestaurant = async (req: Request, res: Response) => {
     const cityCheck = await Restaurant.countDocuments(query);
     if (cityCheck === 0) {
       res.status(404).json({
-        data:[],
+        data: [],
         pagination: {
           total: 0,
           page: 1,
           pages: 1,
-        }
+        },
       });
       return;
     }
@@ -41,7 +59,7 @@ const searchRestaurant = async (req: Request, res: Response) => {
     // inserted by the user
     if (searchQuery) {
       const searchRegex = new RegExp(searchQuery, "i");
-      query["$or"] = [ 
+      query["$or"] = [
         { restaurantName: searchRegex },
         { cuisines: { $in: [searchRegex] } }, // $in : just one matching tag is enough, no need for ALL
       ];
@@ -75,5 +93,6 @@ const searchRestaurant = async (req: Request, res: Response) => {
 };
 
 export default {
+  getRestaurant,
   searchRestaurant,
 };
