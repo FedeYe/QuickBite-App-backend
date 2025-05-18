@@ -14,9 +14,17 @@ const upload = multer({
   },
 });
 
-// endpoint for getting the data of the restaurant managed by the current user
+router.get(
+  "/order",
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.getMyRestaurantOrders
+);
+
+router.patch("/order/:orderId/status", jwtCheck, jwtParse, MyRestaurantController.updateOrderStatus)
+
 router.get("/", jwtCheck, jwtParse, MyRestaurantController.getMyRestaurant);
-// endpoint for creating a restaurant
+
 router.post(
   "/",
   upload.single("imageFile"),
@@ -25,7 +33,7 @@ router.post(
   jwtParse,
   MyRestaurantController.createMyRestaurant
 );
-// endpoint for updating the restaurant
+
 router.put(
   "/",
   upload.single("imageFile"),
